@@ -20,19 +20,19 @@
 	<div class="row">
 
 		<!-- LOCAL INFORMATION -->
+		<% for (var i =0; i < users.length; i++){ %>
 		<div class="col-sm-6">
 			<div class="well">
 				<h3><span class="fa fa-user"></span> Local</h3>
-
 					<p>
-						<strong>id</strong>: <%= user.id %><br>
-						<strong>email</strong>: <%= user.email %><br>
-						<strong>password</strong>: <%= user.password %>
+						<strong>id</strong>: <%= users[i].id %><br>
+						<strong>email</strong>: <%= users[i].email %><br>
+						<strong>password</strong>: <%= users[i].password %>
 					</p>
 
 			</div>
 		</div>
-
+		<% } %>
 	</div>
 
 </div>

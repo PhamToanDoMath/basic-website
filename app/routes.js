@@ -1,6 +1,6 @@
 const {checkNotAuthenticated, checkAuthenticated} = require('./../middlewares/check_admin')
-
-
+const sequelize = require('./../config/sequelize')
+const { QueryTypes } = require('sequelize')
 // app/routes.js
 module.exports = function(app, passport) {
 
@@ -59,9 +59,10 @@ module.exports = function(app, passport) {
 	// =====================================
 	// we will want this protected so you have to be logged in to visit
 	// we will use route middleware to verify this (the isLoggedIn function)
-	app.get('/profile', checkAuthenticated, function(req, res) {
+	app.get('/profile', checkAuthenticated,async function(req, res) {
+		var users = await sequelize.query("SELECT * FROM Manager",{type: QueryTypes.SELECT})
 		res.render('profile.ejs', {
-			user : req.user // get the user out of session and pass to template
+			users : users
 		});
 	});
 
@@ -74,13 +75,3 @@ module.exports = function(app, passport) {
 	});
 };
 
-// route middleware to make sure
-function isLoggedIn(req, res, next) {
-
-	// if user is authenticated in the session, carry on
-	if (req.isAuthenticated())
-		return next();
-
-	// if they aren't redirect them to the home page
-	res.redirect('/');
-}
