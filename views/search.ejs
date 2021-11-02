@@ -1,0 +1,84 @@
+<!-- views/profile.ejs -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Node Authentication</title>
+    <link
+      rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
+    />
+    <style>
+      body {
+        padding-top: 80px;
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span> Search Supplier</h1>
+        <a href="/profile" class="btn btn-default btn-sm">Profile</a>
+        <a href="/search" class="btn btn-default btn-sm">Search</a>
+        <a href="/update" class="btn btn-default btn-sm">Add</a>
+        <a href="/category" class="btn btn-default btn-sm">Category</a>
+        <a href="/order" class="btn btn-default btn-sm">Order</a>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+      </div>
+
+      <div class="row">
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-12">
+          <div class="well">
+            <!-- SEARCH FORM -->
+            <form action="/search" method="POST">
+              <div class="form-group">
+                <label>Input Supplier Name</label>
+                <input type="text" class="form-control" name="name" />
+              </div>
+              <button type="submit" class="btn btn-warning btn-lg">
+                Search
+              </button>
+            </form>
+             <!-- RESULT FORM -->
+             <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Handle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                  </tr>
+                </tbody>
+              </table>
+            <!-- END FORM -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

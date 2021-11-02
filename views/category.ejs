@@ -1,0 +1,80 @@
+<!-- views/profile.ejs -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Node Authentication</title>
+    <link
+      rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
+    />
+    <style>
+      body {
+        padding-top: 80px;
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span> Category Supplier</h1>
+        <a href="/profile" class="btn btn-default btn-sm">Profile</a>
+        <a href="/search" class="btn btn-default btn-sm">Search</a>
+        <a href="/update" class="btn btn-default btn-sm">Add</a>
+        <a href="/category" class="btn btn-default btn-sm">Category</a>
+        <a href="/order" class="btn btn-default btn-sm">Order</a>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+      </div>
+
+      <div class="row">
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-12">
+          <div class="well">
+            <!-- LOGIN FORM -->
+            <form action="/category" method="POST">
+              <div class="form-group">
+                <label>Input Supplier ID</label>
+                <input type="text" class="form-control" name="id" />
+              </div>
+              <button type="submit" class="btn btn-warning btn-lg">
+                Search
+              </button>
+            </form>
+			 <!-- RESULT FORM -->
+			 <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Color</th>
+                    <th scope="col">Manufacture date</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Supplier ID</th>
+                  </tr>
+                </thead>
+                <tbody>
+					      <% categories.map((item, index) => { %>
+                  <tr>
+                    <th scope="row"><%= item.id %></th>
+                    <td><%= item.name %></td>
+                    <td><%= item.color %></td>
+                    <td><%= item.manufacture_date %></td>
+                    <td><%= item.price_at_manufacture %></td>
+                    <td><%= item.quantity %></td>
+                    <td><%= item.supplier_id %></td>
+                  </tr>
+                <% }); %>
+                </tbody>
+              </table>
+			<!-- END FORM -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

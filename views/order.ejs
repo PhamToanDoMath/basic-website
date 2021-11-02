@@ -13,8 +13,8 @@
 <div class="container">
 
 	<div class="page-header text-center">
-		<h1><span class="fa fa-anchor"></span> Profile Page</h1>
-		<a href="/profile" class="btn btn-default btn-sm">Profile</a>
+		<h1><span class="fa fa-anchor"></span> Order Supplier</h1>
+        <a href="/profile" class="btn btn-default btn-sm">Profile</a>
 		<a href="/search" class="btn btn-default btn-sm">Search</a>
 		<a href="/update" class="btn btn-default btn-sm">Add</a>
 		<a href="/category" class="btn btn-default btn-sm">Category</a>
@@ -23,21 +23,20 @@
 	</div>
 
 	<div class="row">
-
 		<!-- LOCAL INFORMATION -->
-		<% for (var i =0; i < users.length; i++){ %>
-		<div class="col-sm-6">
+		<div class="col-sm-12">
 			<div class="well">
-				<h3><span class="fa fa-user"></span> Local</h3>
-					<p>
-						<strong>id</strong>: <%= users[i].id %><br>
-						<strong>email</strong>: <%= users[i].email %><br>
-						<strong>password</strong>: <%= users[i].password %>
-					</p>
-
+                 <!-- LOGIN FORM -->
+            <form action="/search" >
+                <div class="form-group">
+                    <label>Input Supplier Name</label>
+                    <input type="text" class="form-control" name="email">
+                </div>
+                <button type="submit" class="btn btn-warning btn-lg">Search</button>
+            </form>
 			</div>
 		</div>
-		<% } %>
+
 	</div>
 
 </div>
