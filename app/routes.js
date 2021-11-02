@@ -73,5 +73,98 @@ module.exports = function(app, passport) {
 		req.logout();
 		res.redirect('/');
 	});
+	// =====================================
+	// SEARCH SECTION =========================
+	// =====================================
+	app.get('/search', checkAuthenticated, function(req, res) {
+		res.render('search.ejs', {
+			user : req.user // get the user out of session and pass to template
+		});
+	});
+	app.post('/search', checkAuthenticated, function(req, res) {
+		let {name} = req.body;
+		let errors = [];
+		// console.log(name);
+	});
+	// =====================================
+	// UPDATE SECTION =========================
+	// =====================================
+	app.get('/update', checkAuthenticated, function(req, res) {
+		res.render('update.ejs', {
+			user : req.user, // get the user out of session and pass to template
+			success: req.flash("success")
+		});
+	});
+	app.post('/update', checkAuthenticated, async function(req, res) {
+			let {name, phone, address, bank, taxcode} = req.body;
+			data = [[name, address, bank, taxcode, 65, 56 ]];		
+			// console.log(data);
+			var supplier = await sequelize.query("INSERT INTO Supplier (name, address, bank_account, tax_code, agent_id, partner_id) VALUES ?",
+												{replacements: [data],type: QueryTypes.INSERT})
+			var id = supplier[0];
+			console.log(supplier);
+			data_phone = [[id, phone]];			
+			var supplier = await sequelize.query("INSERT INTO `Supplier Phone Number` (supplier_id,phone_number) VALUES ?",
+												{replacements: [data_phone],type: QueryTypes.INSERT})
+			console.log(supplier)
+			req.flash('success',true);
+			res.redirect('/update');	
+			// connection.query("INSERT INTO Supplier (name, address, bank_account, tax_code, agent_id,partner_id) VALUES ?", [data], function(err, rs){
+			// 	if (err) throw err;
+			// 	else {
+			// 		// console.log("Number of records inserted in supplier: " + rs.affectedRows);
+			// 		// console.log("ID SUPLLIER: " + rs.insertId);
+			// 		data_phone = [[rs.insertId, phone]];
+			// 		connection.query("INSERT INTO `Supplier Phone Number` (supplier_id,phone_number) VALUES ?", [data_phone], function(err, result){
+			// 			if(err) throw err;
+			// 			else {
+			// 				req.flash('success',true)
+			// 				res.redirect('/update');
+			// 				console.log("Number of records inserted in supplier phone number: " + rs.affectedRows);
+			// 			}
+			// 		})
+			// 	}
+			// })
+		}
+	);
+	// =====================================
+	// CATEGORY SECTION =========================
+	// =====================================
+	app.get('/category', checkAuthenticated, function(req, res) {
+		// connection.query("SELECT * FROM Category",  function(err, rows) {
+		// 	if(err){
+		// 		console.log(err)
+		// 	} else {
+		// 		console.log(rows);
+		// 		res.render('category.ejs', {categories: rows, user : req.user })
+		// 	}
+		// })
+		res.render('category.ejs', {
+			user : req.user, // get the user out of session and pass to template
+			categories: req.flash("categories")
+		});
+	});
+	app.post('/category', checkAuthenticated, function(req, res) {
+		let {id} = req.body;
+		console.log(id);
+		connection.query("SELECT * FROM Category WHERE supplier_id = ?", [id], function(err, result){
+			if(err) console.log(err);
+			else {
+			
+				// console.log(categories);
+				req.flash('categories',result)
+			}
+			res.redirect('/category');
+			
+		})
+	});
+	
+	// =====================================
+	// ORDER SECTION =========================
+	// =====================================
+	app.get('/order', checkAuthenticated, function(req, res) {
+		res.render('order.ejs', {
+			user : req.user // get the user out of session and pass to template
+		});
+	});
 };
-
