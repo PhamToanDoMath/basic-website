@@ -5,6 +5,6 @@ module.exports = {
         'user': 'root',
         'password': 'Nguyenkhuyen772'
     },
-	'database': 'textile_agency',
-    'users_table': 'users'
+	'database': 'New_sql',
+    'users_table': 'Manager'
 };

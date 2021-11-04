@@ -78,13 +78,32 @@ module.exports = function(app, passport) {
 	// =====================================
 	app.get('/search', checkAuthenticated, function(req, res) {
 		res.render('search.ejs', {
-			user : req.user // get the user out of session and pass to template
+			user : req.user, // get the user out of session and pass to template
+			data: req.flash("data"),
+			message: req.flash("message")
 		});
 	});
-	app.post('/search', checkAuthenticated, function(req, res) {
-		let {name} = req.body;
-		let errors = [];
-		// console.log(name);
+	app.post('/search', checkAuthenticated, async function(req, res) {
+		
+		let {id} = req.body;
+		try {
+			var supplier_phone = await sequelize.query("SELECT * FROM `Supplier Phone Number` WHERE supplier_id = ?" , 
+										{replacements: [id] ,type: QueryTypes.SELECT})
+			var supplier = await sequelize.query("SELECT * FROM Supplier WHERE id = ?" , {replacements: [id] ,type: QueryTypes.SELECT})
+			// console.log(supplier_phone);
+			// console.log(supplier);
+			supplier = {...supplier, phone: supplier_phone[0].phone_number};
+			const data = [supplier[0]];
+			data[0]['phone'] = supplier_phone[0].phone_number;
+			// console.log(data);
+			req.flash('data',data);
+			res.redirect('/search');
+		} catch (err){
+			console.log(err);
+			req.flash('message',"Error");
+			res.redirect('/search');
+		}
+		
 	});
 	// =====================================
 	// UPDATE SECTION =========================
@@ -92,71 +111,76 @@ module.exports = function(app, passport) {
 	app.get('/update', checkAuthenticated, function(req, res) {
 		res.render('update.ejs', {
 			user : req.user, // get the user out of session and pass to template
-			success: req.flash("success")
+			success: req.flash("success"),
+			message: req.flash("message")
 		});
 	});
 	app.post('/update', checkAuthenticated, async function(req, res) {
 			let {name, phone, address, bank, taxcode} = req.body;
-			data = [[name, address, bank, taxcode, 65, 56 ]];		
-			// console.log(data);
-			var supplier = await sequelize.query("INSERT INTO Supplier (name, address, bank_account, tax_code, agent_id, partner_id) VALUES ?",
-												{replacements: [data],type: QueryTypes.INSERT})
-			var id = supplier[0];
-			console.log(supplier);
-			data_phone = [[id, phone]];			
-			var supplier = await sequelize.query("INSERT INTO `Supplier Phone Number` (supplier_id,phone_number) VALUES ?",
-												{replacements: [data_phone],type: QueryTypes.INSERT})
-			console.log(supplier)
-			req.flash('success',true);
-			res.redirect('/update');	
-			// connection.query("INSERT INTO Supplier (name, address, bank_account, tax_code, agent_id,partner_id) VALUES ?", [data], function(err, rs){
-			// 	if (err) throw err;
-			// 	else {
-			// 		// console.log("Number of records inserted in supplier: " + rs.affectedRows);
-			// 		// console.log("ID SUPLLIER: " + rs.insertId);
-			// 		data_phone = [[rs.insertId, phone]];
-			// 		connection.query("INSERT INTO `Supplier Phone Number` (supplier_id,phone_number) VALUES ?", [data_phone], function(err, result){
-			// 			if(err) throw err;
-			// 			else {
-			// 				req.flash('success',true)
-			// 				res.redirect('/update');
-			// 				console.log("Number of records inserted in supplier phone number: " + rs.affectedRows);
-			// 			}
-			// 		})
-			// 	}
-			// })
+			data = [[name, address, bank, taxcode, null, null ]];
+			try {
+				// console.log(data);
+				// THROW ERROR IF PHONE NUMBER IS EXIST IN TABLE
+				var isPhoneExist = await sequelize.query("SELECT * FROM `Supplier Phone Number` WHERE phone_number = ?", 
+										{replacements: [phone],type: QueryTypes.SELECT})
+				console.log(isPhoneExist);
+				if(isPhoneExist.length === 0){
+					var supplier = await sequelize.query("INSERT INTO Supplier (name, address, bank_account, tax_code, agent_id, partner_id) VALUES ?",
+										{replacements: [data],type: QueryTypes.INSERT})
+					var id = supplier[0];
+					console.log(supplier);
+					data_phone = [[id, phone]];			
+					var supplier = await sequelize.query("INSERT INTO `Supplier Phone Number` (supplier_id,phone_number) VALUES ?",
+							{replacements: [data_phone],type: QueryTypes.INSERT})
+					console.log(supplier)
+					req.flash('success',true);
+					res.redirect('/update');
+				} else {
+					throw "This phone numer has already existed in database!";
+				}			
+			} catch (err) {
+				console.log(err.sqlMessage);
+				req.flash('message',err);
+				res.redirect('/update');
+			}
+			
 		}
 	);
 	// =====================================
 	// CATEGORY SECTION =========================
 	// =====================================
 	app.get('/category', checkAuthenticated, function(req, res) {
-		// connection.query("SELECT * FROM Category",  function(err, rows) {
-		// 	if(err){
-		// 		console.log(err)
-		// 	} else {
-		// 		console.log(rows);
-		// 		res.render('category.ejs', {categories: rows, user : req.user })
-		// 	}
-		// })
 		res.render('category.ejs', {
 			user : req.user, // get the user out of session and pass to template
-			categories: req.flash("categories")
+			categories: req.flash("categories"),
+			supplier: req.flash("supplier"),
+			message: req.flash("message")
 		});
 	});
-	app.post('/category', checkAuthenticated, function(req, res) {
+	app.post('/category', checkAuthenticated, async function(req, res) {
 		let {id} = req.body;
-		console.log(id);
-		connection.query("SELECT * FROM Category WHERE supplier_id = ?", [id], function(err, result){
-			if(err) console.log(err);
-			else {
-			
-				// console.log(categories);
-				req.flash('categories',result)
-			}
+		try {
+				try {
+					var supplier = await sequelize.query("SELECT * FROM Supplier WHERE id = ?" , 
+								{replacements: [id] ,type: QueryTypes.SELECT});
+					try {
+						var categories = await sequelize.query("SELECT * FROM Category WHERE supplier_id = ?" , 
+								{replacements: [id] ,type: QueryTypes.SELECT})
+						req.flash('categories',categories)
+						req.flash('supplier',supplier)
+						res.redirect('/category');
+					}catch (error){
+						throw "This supplier does not provide any category!!!"
+					}
+				} catch (err){
+					throw "This supplier does not exist in database!!!"
+				}
+		} catch (err) {
+			console.log(err);
+			req.flash('message',err);
 			res.redirect('/category');
-			
-		})
+		}
+		
 	});
 	
 	// =====================================
@@ -164,7 +188,80 @@ module.exports = function(app, passport) {
 	// =====================================
 	app.get('/order', checkAuthenticated, function(req, res) {
 		res.render('order.ejs', {
-			user : req.user // get the user out of session and pass to template
+			user : req.user, // get the user out of session and pass to template
+			data: req.flash("data"),
+			main_order: req.flash("main_order"),
+			message: req.flash("message")
 		});
+	});
+	app.post('/order', checkAuthenticated, async function(req, res) {
+		let {id} = req.body;
+		console.log("ID: " + id);
+		try {
+				var data = {};
+				//GET CUSTOMER INFORMATION
+				const customer = await sequelize.query("SELECT * FROM Customer WHERE id = ?", 
+				{replacements: [id] ,type: QueryTypes.SELECT} ) 
+				const customer_phone = await sequelize.query("SELECT * FROM `Customer Phone Number` WHERE customer_id = ?", 
+				{replacements: [id] ,type: QueryTypes.SELECT} )
+				// If true, return Customer object (id, first_name, last_name, warning_flag, debt_amount,office_id, arrearage_id)
+				data = {
+					id_customer: customer[0].id,
+					name_customer: customer[0].first_name + " " + customer[0].last_name,
+					phone_customer: customer_phone[0].phone_number
+				}
+				// console.log("AFTER SELECT CUSTOMER: " + JSON.stringify(data));
+				//GET ORDERS OF CUSTOMER
+				const orders = await sequelize.query("SELECT * FROM Customer_order WHERE customer_id = ?",
+									 {replacements: [data.id_customer] ,type: QueryTypes.SELECT} );
+				// console.log("AFTER SELECT ORDER: " + JSON.stringify(orders));
+
+				var main_order = await Promise.all(orders.map(async (item, index) => {
+					
+					//GET STATUS OF EACH ORDER
+					var order_status = await sequelize.query("SELECT * FROM `Order Status` WHERE order_id = ?",
+										{replacements: [item.id] ,type: QueryTypes.SELECT});
+					// console.log("ORDER [" + index + "]: " + JSON.stringify(order_status));
+					var bolts = await sequelize.query("SELECT * FROM `Bolt` WHERE order_id = ?",
+										{replacements: [item.id] ,type: QueryTypes.SELECT});
+					console.log("	BOLTS [" + index + "]: " + JSON.stringify(bolts));
+					var category = await Promise.all(bolts.map(async (bolt, key) => {
+						try {
+							var categories = await sequelize.query("SELECT * FROM `Category` WHERE id = ?",
+										{replacements: [bolt.category_id] ,type: QueryTypes.SELECT});
+							console.log("		CATEGORY [" + key + "]: " + JSON.stringify(categories));
+							return categories;
+						} catch(err){
+							throw "No category";
+						}
+						
+						
+					}))
+					if(order_status[0] === undefined) {
+						order_status[0] = {
+							order_id: "null",
+							date: "null",
+							is_cancelled: "null",
+							is_new: "null",
+							is_ordered: "null",
+							is_partial_paid: "null",
+							is_full_paid: "null",
+							cancellation_reason: 'none'
+						  }
+					}
+					var status_obj = order_status[0];
+					return {item, status_obj, bolts, category};
+				}))
+
+				// console.log(JSON.stringify(data));
+				req.flash('data',data)
+				req.flash('main_order',main_order)
+				res.redirect('/order');
+		} catch (err) {
+			console.log(err.name);
+			req.flash('message',err.name);
+			res.redirect('/order');
+		}
+		
 	});
 };

@@ -13,7 +13,7 @@
 <div class="container">
 
 	<div class="page-header text-center">
-		<h1><span class="fa fa-anchor"></span> Order Supplier</h1>
+		<h1>Order Information Report</h1>
         <a href="/profile" class="btn btn-default btn-sm">Profile</a>
 		<a href="/search" class="btn btn-default btn-sm">Search</a>
 		<a href="/update" class="btn btn-default btn-sm">Add</a>
@@ -27,13 +27,94 @@
 		<div class="col-sm-12">
 			<div class="well">
                  <!-- LOGIN FORM -->
-            <form action="/search" >
+            <form action="/order" method="POST" >
                 <div class="form-group">
-                    <label>Input Supplier Name</label>
-                    <input type="text" class="form-control" name="email">
+                    <label>Input Supplier ID</label>
+                    <input type="number" class="form-control" name="id">
                 </div>
                 <button type="submit" class="btn btn-warning btn-lg">Search</button>
             </form>
+			 <!-- MESSAGE ERROR -->
+             <% if(message.length) { %>
+				<div style="margin-block: 10px">
+				  <div class="alert alert-danger" role="alert">  <%= message %></div>
+				</div>
+			<% } %>
+			<% if(data[0]) { %>
+				<% console.log(data) %>
+				<% console.log(main_order) %>
+			<div class="panel panel-default" style="margin-top: 15px">
+				<!-- Default panel contents -->
+				<div class="panel-heading">
+					<h4>CUSTOMER INFORMATION</h4>
+					<p><strong>Customer ID: </strong><%= data[0].id_customer %></p>
+					<p><strong>Customer: </strong> <%= data[0].name_customer %></p>
+					<p><strong>Phone number: </strong><%= data[0].phone_customer %></p>
+				</div>
+				<% main_order.map((order, key) => { %>
+				<div class="panel panel-default" style="margin-top: 10px">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-xs-4"><p><strong>ORDER ID: #</strong><%= order.item.id %></p></div>
+							<div class="col-xs-4"><p><strong>Data order: </strong><%= order.item.date %></div>
+							<div class="col-xs-4"><p><strong>Total Price: </strong><%= order.item.total_price %></div>
+						</div>
+						<div class="row">
+							<div class="col-xs-1"><h4>STATE</h4></div>
+							<div class="col-xs-11"><hr/></div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12">(last update: <%= order.status_obj.date %>)</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-4"><strong>Cancel: </strong><%= order.status_obj.is_cancelled %></div>
+							<div class="col-xs-4"><strong>New: </strong><%= order.status_obj.is_new %></div>
+							<div class="col-xs-4"><strong>Ordered: </strong><%= order.status_obj.is_ordered %></div>
+						</div>
+						<div class="row">
+							<div class="col-xs-4"><strong>Paritial Paid: </strong><%= order.status_obj.is_partial_paid %></div>
+							<div class="col-xs-4"><strong>Full Paid: </strong><%= order.status_obj.is_full_paid %></div>
+							<div class="col-xs-4"><strong>Cancel Reason: </strong><%= order.status_obj.cancellation_reason %></div>
+						</div>
+						<div class="row">
+							<div class="col-xs-3"><h4>BOLTS INFORMATION</h4></div>
+							<div class="col-xs-9"><hr/></div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12">
+							<table class="table">
+								<thead>
+								  <tr>
+									<th scope="col">#</th>
+									<th scope="col">Category</th>
+									<th scope="col">Color</th>
+									<th scope="col">Length</th>
+									<th scope="col">Manufacture Date</th>
+									<th scope="col">Quantity</th>
+									<th scope="col">Price</th>
+								  </tr>
+								</thead>
+								<% order.bolts.map((bolt, keybolt) => { %>
+								<tbody>
+								  <tr>
+									<th scope="row"> <%= bolt.id %> </th>
+									<td> <%= order.category[keybolt][0].name %></td>
+									<td> <%= order.category[keybolt][0].color %> </td>
+									<td> <%= bolt.length %> cm</td>
+									<td> <%= order.category[keybolt][0].manufacture_date %></td>
+									<td> <%= order.category[keybolt][0].quantity %> </td>
+									<td> <%= order.category[keybolt][0].price_at_manufacture %> </td>
+								  </tr>
+								</tbody>
+								<% });%>
+							  </table>
+							</div>
+						</div>
+					</div>
+				  </div>
+				  <% });%>
+			</div>
+			<% } %>
 			</div>
 		</div>
 

@@ -21,7 +21,7 @@
   <body>
     <div class="container">
       <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Search Supplier</h1>
+        <h1><span class="fa fa-anchor"></span> Search material purchasing information</h1>
         <a href="/profile" class="btn btn-default btn-sm">Profile</a>
         <a href="/search" class="btn btn-default btn-sm">Search</a>
         <a href="/update" class="btn btn-default btn-sm">Add</a>
@@ -37,42 +37,45 @@
             <!-- SEARCH FORM -->
             <form action="/search" method="POST">
               <div class="form-group">
-                <label>Input Supplier Name</label>
-                <input type="text" class="form-control" name="name" />
+                <label>Input Supplier ID</label>
+                <input type="number" class="form-control" name="id" />
               </div>
               <button type="submit" class="btn btn-warning btn-lg">
                 Search
               </button>
             </form>
+             <!-- MESSAGE ERROR -->
+            <% if(message.length) { %>
+            <div style="margin-block: 10px">
+              <div class="alert alert-danger" role="alert">
+                This supplier does not exist in database. Please choose from 1, 2, 3, etc. for testing.
+              </div>
+            </div>
+            <% } %>
              <!-- RESULT FORM -->
              <table class="table">
+               <% data.map((item, index) => {  %>
                 <thead>
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">Supplier name</th>
+                    <th scope="col">Phone number</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Bank account</th>
+                    <th scope="col">Tax code</th>
                   </tr>
                 </thead>
                 <tbody>
+                  
                   <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
+                    <th scope="row"><%= item.id %></th>
+                    <td><%= item.name %></td>
+                    <td><%= item.phone %></td>
+                    <td><%= item.address %></td>
+                    <td><%= item.bank_account %></td>
+                    <td><%= item.tax_code %></td>
                   </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
+                  <% }); %>
                 </tbody>
               </table>
             <!-- END FORM -->

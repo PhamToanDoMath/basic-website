@@ -38,14 +38,21 @@
             <form action="/category" method="POST">
               <div class="form-group">
                 <label>Input Supplier ID</label>
-                <input type="text" class="form-control" name="id" />
+                <input type="number" class="form-control" name="id" />
               </div>
               <button type="submit" class="btn btn-warning btn-lg">
                 Search
               </button>
             </form>
+             <!-- MESSAGE ERROR -->
+             <% if(message.length) { %>
+              <div style="margin-block: 10px">
+                <div class="alert alert-danger" role="alert">  <%= message %></div>
+              </div>
+              <% } %>
 			 <!-- RESULT FORM -->
 			 <table class="table">
+                
                 <thead>
                   <tr>
                     <th scope="col">#</th>
@@ -54,11 +61,11 @@
                     <th scope="col">Manufacture date</th>
                     <th scope="col">Price</th>
                     <th scope="col">Quantity</th>
-                    <th scope="col">Supplier ID</th>
+                    <th scope="col">Supplier name</th>
                   </tr>
                 </thead>
                 <tbody>
-					      <% categories.map((item, index) => { %>
+                  <% categories.map((item, index) => { %>
                   <tr>
                     <th scope="row"><%= item.id %></th>
                     <td><%= item.name %></td>
@@ -66,7 +73,7 @@
                     <td><%= item.manufacture_date %></td>
                     <td><%= item.price_at_manufacture %></td>
                     <td><%= item.quantity %></td>
-                    <td><%= item.supplier_id %></td>
+                    <td><span><%= supplier[0].name %></span> (ID: <%= supplier[0].id %>)</td>
                   </tr>
                 <% }); %>
                 </tbody>
