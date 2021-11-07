@@ -5,6 +5,8 @@ module.exports = {
         'user': 'root',
         'password': ''
     },
+
 	'database': 'textile_agency',
+
     'users_table': 'Manager'
 };

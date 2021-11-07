@@ -245,6 +245,7 @@ module.exports = function(app, passport) {
 					else if(order_status[0].is_partial_paid === 1) status = "Partial Paid";
 					else if(order_status[0].is_full_paid === 1) status = "Full Paid";
 					return {item, status, bolts, category,cancel, date};
+
 				}))
 
 				// console.log(JSON.stringify(data));
