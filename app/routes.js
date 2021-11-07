@@ -237,20 +237,15 @@ module.exports = function(app, passport) {
 						
 						
 					}))
-					if(order_status[0] === undefined) {
-						order_status[0] = {
-							order_id: "null",
-							date: "null",
-							is_cancelled: "null",
-							is_new: "null",
-							is_ordered: "null",
-							is_partial_paid: "null",
-							is_full_paid: "null",
-							cancellation_reason: 'none'
-						  }
-					}
-					var status_obj = order_status[0];
-					return {item, status_obj, bolts, category};
+					var date = order_status[0].date;
+					var status = "";
+					var cancel = {cancelled : "Cancelled",reason : order_status[0].cancellation_reason};
+					if(order_status[0].is_new === 1) status = "New";
+					else if(order_status[0].is_ordered === 1) status = "Ordered";
+					else if(order_status[0].is_partial_paid === 1) status = "Partial Paid";
+					else if(order_status[0].is_full_paid === 1) status = "Full Paid";
+					return {item, status, bolts, category,cancel, date};
+
 				}))
 
 				// console.log(JSON.stringify(data));

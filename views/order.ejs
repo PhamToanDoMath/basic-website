@@ -29,7 +29,9 @@
                  <!-- LOGIN FORM -->
             <form action="/order" method="POST" >
                 <div class="form-group">
-                    <label>Input Supplier ID</label>
+
+                    <label>Input Customer ID</label>
+
                     <input type="number" class="form-control" name="id">
                 </div>
                 <button type="submit" class="btn btn-warning btn-lg">Search</button>
@@ -59,23 +61,22 @@
 							<div class="col-xs-4"><p><strong>Data order: </strong><%= order.item.date %></div>
 							<div class="col-xs-4"><p><strong>Total Price: </strong><%= order.item.total_price %></div>
 						</div>
+
+						<% if(data[0].status != "") { %>
 						<div class="row">
-							<div class="col-xs-1"><h4>STATE</h4></div>
-							<div class="col-xs-11"><hr/></div>
+							<div class="col-xs-12"><h5>Status: <%= order.status %> </h5></div>
 						</div>
+						<% } %>
+						<% if(data[0].status == "") { %>
+							<div class="row">
+								<div class="col-xs-6"><h4>Status: <%= order.cancel.cancelled %> </h4></div>
+								<div class="col-xs-6"><h4>Reason: <%= order.cancel.cancellation_reason %> </h4></div>
+							</div>
+						<% } %>
 						<div class="row">
-							<div class="col-xs-12">(last update: <%= order.status_obj.date %>)</div>
+							<div class="col-xs-12">(last update status: <%= order.date %>)</div>
 						</div>
-						<div class="row">
-							<div class="col-xs-4"><strong>Cancel: </strong><%= order.status_obj.is_cancelled %></div>
-							<div class="col-xs-4"><strong>New: </strong><%= order.status_obj.is_new %></div>
-							<div class="col-xs-4"><strong>Ordered: </strong><%= order.status_obj.is_ordered %></div>
-						</div>
-						<div class="row">
-							<div class="col-xs-4"><strong>Paritial Paid: </strong><%= order.status_obj.is_partial_paid %></div>
-							<div class="col-xs-4"><strong>Full Paid: </strong><%= order.status_obj.is_full_paid %></div>
-							<div class="col-xs-4"><strong>Cancel Reason: </strong><%= order.status_obj.cancellation_reason %></div>
-						</div>
+
 						<div class="row">
 							<div class="col-xs-3"><h4>BOLTS INFORMATION</h4></div>
 							<div class="col-xs-9"><hr/></div>
